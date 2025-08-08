@@ -1,0 +1,36 @@
+# R Package Dependencies for Manufactured Housing HMDA Classifier
+# Install these packages in R using: install.packages(c("package1", "package2", ...))
+
+# Core data manipulation and I/O
+here             # Construct file paths relative to project root
+data.table       # Fast data manipulation and analysis
+readxl           # Read Excel files
+bit64           # 64-bit integers for large datasets
+
+# Census API access
+censusapi       # Interface to U.S. Census Bureau APIs
+
+# Machine learning and modeling
+lightgbm        # Light Gradient Boosting Machine classifier
+pROC            # ROC curve analysis and AUC calculation
+caret           # Classification and Regression Training
+
+# Statistical analysis
+fixest          # Fast fixed-effects estimations
+
+# Visualization and reporting
+ggplot2         # Grammar of graphics plotting
+kableExtra      # Enhanced table formatting for LaTeX/HTML
+
+# System requirements:
+# - R >= 4.0.0
+# - Census API key (register at https://api.census.gov/data/key_signup.html)
+# - Set environment variable: CENSUS_KEY="your_api_key_here"
+
+# Optional for performance:
+# - Multi-core processing capabilities for lightgbm
+# - Sufficient RAM for large datasets (32GB+ recommended)
+
+# Installation command for all packages:
+# install.packages(c("here", "data.table", "readxl", "bit64", "censusapi", 
+#                   "lightgbm", "pROC", "caret", "fixest", "ggplot2", "kableExtra"))

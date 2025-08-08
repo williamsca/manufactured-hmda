@@ -1,3 +1,8 @@
+*.pdf
+
+data/
+crosswalk/
+
 # History files
 .Rhistory
 .Rapp.history
