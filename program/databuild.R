@@ -9,11 +9,9 @@
 # The result is a comprehensive dataset for training a manufactured housing classifier.
 #
 # Data sources:
-# - HMDA: Retrieved via automated download scripts
+# - HMDA: Retrieved via manual download and processing scripts
 # - Census tract concordances: IPUMS NHGIS (https://www.nhgis.org/geographic-crosswalks)
 # - CPI: Bureau of Labor Statistics
-#
-# Note: Requires automated data retrieval scripts to populate input directories
 
 # Clean environment and load required packages
 rm(list = ls())
@@ -28,7 +26,7 @@ for (pkg in required_packages) {
 
 # Verify directory structure
 if (!dir.exists(here("data", "hmda"))) {
-    stop("HMDA data directory not found. Please download HMDA data as per README instructions.")
+    stop("HMDA data directory not found. Please download HMDA data as per README.md instructions.")
 }
 if (!dir.exists(here("derived"))) {
     dir.create(here("derived"), recursive = TRUE)
@@ -125,10 +123,6 @@ tryCatch({
         "crosswalk", "nhgis_tr2000_tr2010", "nhgis_tr2000_tr2010.csv"),
         select = c("tr2000ge", "tr2010ge", "wt_hu"),
         keepLeadingZeros = TRUE)
-    dt_2020 <- fread(here(
-        "crosswalk", "nhgis_tr2020_tr2010", "nhgis_tr2020_tr2010.csv"),
-        select = c("tr2020ge", "tr2010ge", "wt_hu"),
-        keepLeadingZeros = TRUE)
 }, error = function(e) {
     stop("Error loading tract concordance files: ", e$message, "\nPlease ensure crosswalk files are available.")
 })
@@ -136,11 +130,9 @@ setnames(dt_1990, "tr1990ge", "census_tract")
 dt_1990[, decade := 1990]
 setnames(dt_2000, "tr2000ge", "census_tract")
 dt_2000[, decade := 2000]
-setnames(dt_2020, "tr2020ge", "census_tract")
-dt_2020[, decade := 2020]
 
 dt_cw <- rbind(
-    dt_1990, dt_2000, dt_2020,
+    dt_1990, dt_2000,
     use.names = TRUE, fill = TRUE
 )
 
@@ -230,23 +222,14 @@ build_data <- function(path) {
 
     dt <- dt[!is.na(county_code)]
 
-    if (data_year <= 2017) {
-        if (class(dt$state_code) != "character") {
-            dt[, state_code := sprintf("%02d", as.integer(state_code))]
-        }
-        if (class(dt$county_code) != "character") {
-            dt[, county_code := sprintf("%03d", as.integer(county_code))]
-        }
-        if (class(dt$census_tract) != "character") {
-            dt[, census_tract := sprintf("%06d", as.integer(census_tract * 100))]
-        }
-    } else {
-        if (class(dt$census_tract) != "character") {
-            dt[, census_tract := sprintf("%011s", as.character(census_tract))]
-            dt[, census_tract := gsub(" ", "0", census_tract)]
-        }
-        dt[, state_code := substr(census_tract, 1, 2)]
-        dt[, county_code := substr(census_tract, 3, 5)]
+    if (class(dt$state_code) != "character") {
+        dt[, state_code := sprintf("%02d", as.integer(state_code))]
+    }
+    if (class(dt$county_code) != "character") {
+        dt[, county_code := sprintf("%03d", as.integer(county_code))]
+    }
+    if (class(dt$census_tract) != "character") {
+        dt[, census_tract := sprintf("%06d", as.integer(census_tract * 100))]
     }
 
     dt <- dt[state_code %in% dt_states$state_code] # remove PR
@@ -269,12 +252,10 @@ build_data <- function(path) {
     # result: large majority of mfh loans (4/5) are from non-specialized lenders
     # table(dt[year %in% c(2004, 2005), .(property_type, property_type_imp)])
 
-    if (data_year <= 2017) {
-        dt[, census_tract := paste0(
+    dt[, census_tract := paste0(
         state_code, county_code, gsub("\\.", "", census_tract)
     )]
-        dt <- dt[nchar(census_tract) == 11 | nchar(census_tract) == 5]
-    }
+    dt <- dt[nchar(census_tract) == 11 | nchar(census_tract) == 5]
 
     if (data_year <= 2002) {
         dt <- merge(
@@ -286,10 +267,6 @@ build_data <- function(path) {
             by = "census_tract", all.x = TRUE)
     } else if (data_year <= 2021) {
         dt[, tr2010ge := census_tract]
-    } else if (data_year <= 2023) {
-        dt <- merge(
-            dt, dt_cw[decade == 2020, .(census_tract, tr2010ge)],
-            by = "census_tract", all.x = TRUE)
     } else {
         stop("Data year not supported")
     }
@@ -307,7 +284,7 @@ build_data <- function(path) {
     dt[, decade := fcase(
         between(year, 1990, 1999), 1990, # 2000 decennial census
         between(year, 2000, 2009), 2000, # 2009 ACS
-        between(year, 2010, 2023), 2010, # 2019 ACS
+        between(year, 2010, 2017), 2010, # 2019 ACS
         default = NA_integer_
     )]
     dt <- merge(
@@ -392,45 +369,3 @@ build_data <- function(path) {
 
 # export ----
 lapply(l_hmda, build_data)
-
-# superseded ----
-# convert ACS to 2010 tracts using housing unit weights
-weighted_agg <- function() {
-    v_geo <- c(
-        "tr2000ge", "tr2010ge", "state", "county", "tract", "wt_hu",
-        "year"
-    )
-    v_val <- setdiff(names(dt_census), v_geo)
-
-    dt_census[,
-        (v_val) := lapply(.SD, function(x) x * wt_hu),
-        .SDcols = v_val
-    ]
-    dt_census <- dt_census[,
-        lapply(.SD, sum),
-        by = .(tr2010ge, state, county, tract, year),
-        .SDcols = v_val
-    ]
-}
-
-tract_concordance <- function() {
-    dt_1990[, max_wt_hu := max(wt_hu), by = tr1990ge]
-    dt_1990 <- dt_1990[wt_hu == max_wt_hu & wt_hu > 0]
-
-    dt_1990[, min_target := min(tr2010ge), by = tr1990ge]
-    dt_1990 <- dt_1990[tr2010ge == min_target]
-
-    if (nrow(dt_1990) != uniqueN(dt_1990$tr1990ge)) {
-        stop("Multiple 1990 tracts match 2010 tract")
-    }
-
-    dt_2000[, max_wt_hu := max(wt_hu), by = tr2000ge]
-    dt_2000 <- dt_2000[wt_hu == max_wt_hu & wt_hu > 0]
-    dt_2000[, min_target := min(tr2010ge), by = tr2000ge]
-    dt_2000 <- dt_2000[tr2010ge == min_target]
-
-    if (nrow(dt_2000) != uniqueN(dt_2000$tr2000ge)) {
-        stop("Multiple 2000 tracts match 2010 tract")
-    }
-
-}

@@ -1,5 +1,11 @@
 *.pdf
 
+# hpc job files
+*.slurm
+*.err
+*.out
+*.log
+
 data/
 derived/
 

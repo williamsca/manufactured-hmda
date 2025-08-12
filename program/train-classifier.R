@@ -1,18 +1,14 @@
-# This script imputes the likely property type for HMDA loans in the
-# 1990-2003 data using a neural network trained on the 2004-2019 data.
+# This script trains a LightGBM classifier on HMDA data for 2004-2017
+# to predict whether a loan is for a manufactured home.
 
 rm(list = ls())
 library(here)
 library(data.table)
 
-library(ggplot2)
-
 library(lightgbm)
 library(pROC)
 library(caret)
 library(kableExtra)
-
-sink("classifier-log.txt", append = TRUE)
 
 # import ----
 v_train <- 2004:2013
@@ -265,7 +261,8 @@ kable(summary_table,
   kable_styling(latex_options = c("hold_position")) %>%
   footnote(general = "Standard deviations in parentheses. Dollar amounts in thousands of 2010 dollars. Source: HMDA data.",
            threeparttable = TRUE) %>%
-  writeLines(here("results", "tables", "sum-stats.tex"))
+  writeLines(here("results", "tables", "sum-stats.tex")) %>%
+  save_kable(here("results", "tables", "sum-stats.pdf"))
 
 # export model metrics table ----
 metrics_table <- all_metrics[, .(
@@ -286,7 +283,8 @@ kable(metrics_table,
   kable_styling(latex_options = c("hold_position")) %>%
   footnote(general = "Metrics calculated using optimal threshold from Youden's J statistic. Training: 2004-2013, Validation: 2014-2015, Test: 2016-2017. Source: HMDA data.",
            threeparttable = TRUE) %>%
-  writeLines(here("results", "tables", "model_metrics.tex"))
+  writeLines(here("results", "tables", "model_metrics.tex")) %>%
+  save_kable(here("results", "tables", "model_metrics.pdf"))
 
 # feature importance analysis
 importance <- lgb.importance(lgb_model)
@@ -294,5 +292,3 @@ print(importance)
 
 # top 15 features
 lgb.plot.importance(importance, top_n = 15)
-
-sink()

@@ -18,7 +18,7 @@ read_hmda <- function(year) {
         keepLeadingZeros = TRUE, drop = c("oo_value_tot"))
 }
 
-dt <- rbindlist(lapply(v_hist, read_hmda), use.names = TRUE)
+dt <- rbindlist(lapply(v_hist, read_hmda), use.names = TRUE, fill = TRUE)
 dt_train <- rbindlist(lapply(v_train, read_hmda), use.names = TRUE)
 
 lgb_model <- lgb.load(here("derived", "mfh-classifier.txt"))
@@ -87,7 +87,7 @@ dt <- dt[, .(
 # export ----
 saveRDS(dt, here("derived", "hmda_1990_2017_imputed.Rds"))
 
-fwrite(dt[, .(sequence_number, is_mfh_pred)],
+fwrite(dt[, .(sequence_number, year, is_mfh_pred)],
        here("derived", "hmda_1990_2017_imputed.csv"))
 
 sink()
