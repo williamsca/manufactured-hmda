@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 
-This repository contains a machine learning classifier that identifies manufactured home loans in historical Home Mortgage Disclosure Act (HMDA) data from 1990-2003, when property type information was not systematically collected.
+This repository contains documentation and output for a machine learning classifier that identifies manufactured home loans in historical Home Mortgage Disclosure Act (HMDA) data from 1990-2003, when property type information was not collected.
 
 ## Overview
 
@@ -14,7 +14,7 @@ The lack of property type data prevents researchers from analyzing manufactured 
 
 ### Solution: Machine Learning Classification
 
-We employ a **Light Gradient Boosting Machine (LightGBM)** classifier to identify manufactured home loans in historical HMDA data. The model is trained on HMDA data from 2004-2013 (when property type was reported) and validated on 2014-2017 data.
+I employ a **Light Gradient Boosting Machine (LightGBM)** classifier to identify manufactured home loans in historical HMDA data. The model is trained on HMDA data from 2004-2013 (when property type was reported) and validated on 2014-2017 data.
 
 **Key advantages of our approach:**
 - Efficient handling of categorical variables without extensive preprocessing
@@ -63,7 +63,7 @@ The classifier does not rely solely on loan amounts to distinguish property type
 
 #### External Validation Against Census Data
 
-We validate the model's historical predictions against independent Census data on manufactured home placements. The model successfully captures the decline in manufactured housing that began in 1999, though origination patterns lag placement data as expected.
+I validate the model's historical predictions against independent Census data on manufactured home placements. The model successfully captures the decline in manufactured housing that began in 1999, though origination patterns lag placement data as expected.
 
 ![Originations vs Placements](results/plots/orig_tot-place_tot.png)
 
@@ -97,6 +97,7 @@ manufactured-hmda/
 - **R** >= 4.0.0
 - **System Requirements**: 32GB+ RAM, 8+ cores recommended for large datasets
 - **Census API Key**: Register at https://api.census.gov/data/key_signup.html
+- **HMDA Data**: Download raw HMDA files as described below
 
 ### Installation
 
@@ -119,6 +120,10 @@ manufactured-hmda/
    ```bash
    make install-deps
    ```
+
+### Data Preparation
+1. Navigate to [OpenICPSR](https://www.openicpsr.org/openicpsr/project/151921/version/V1/view) to download historical HMDA data files (1990-2006) provided in a digital format by Andrew Forrester. Place the downloaded `.zip` files in the `data/hmda/` directory.
+2. Navigate to [CFPB](https://www.consumerfinance.gov/data-research/hmda/historic-data/?geo=nationwide&records=originated-records&field_descriptions=codes) and download contemporary HMDA data (2007-2017) and save them in the same `data/hmda/` directory. Make sure to obtain all originated mortgages.
 
 ### Usage
 
@@ -242,3 +247,4 @@ For questions about the methodology or implementation:
 - U.S. Census Bureau for demographic data access
 - Consumer Financial Protection Bureau for HMDA data
 - Department of Housing and Urban Development for manufactured home lender data
+- Forrester, Andrew. Historical Home Mortgage Disclosure Act (HMDA) Data. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2021-10-10. https://doi.org/10.3886/E151921V1

@@ -17,6 +17,8 @@ library(data.table)
 # Import ----
 # filter to reduce size on disk
 v_keep <- c(
+    "sequence_number",
+
     "year",
 
     # loan characteristics
@@ -36,12 +38,15 @@ v_keep <- c(
 # 1990 - 2006
 read_hmda_old <- function(year) {
 
-    if (file.exists(here("data", "hmda", paste0("hmda_", year, ".csv")))) {
+    input_file <- here("data", "hmda", paste0("HMDA_LAR_", year, ".zip"))
+
+    if (!file.exists(input_file)) {
+        stop("HMDA file for year ", year,
+        " not found. Refer to README.md for download instructions.\n")
         return(NULL)
     }
 
-    data <- fread(
-        here("data", "hmda", paste0("HMDA_LAR_", year, ".txt")))
+    data <- fread(cmd = sprintf("unzip -p %s", input_file))
 
     setnames(data,
         c("occupancy_type", "activity_year"),
@@ -59,10 +64,6 @@ read_hmda_old <- function(year) {
         !is.na(state_code) & state_code != "" # not missing state
     ]
 
-    if (year >= 2004) {
-        # data <- data[lien_status == 1] # first lien (no chattel loans)
-    }
-
     data[, is_urban := !is.na(msamd)]
     data[, income := as.integer(income)]
     data[, loan_amount := as.integer(loan_amount)]
@@ -74,6 +75,7 @@ read_hmda_old <- function(year) {
     data <- data[, ..v_keep]
     
     # Save processed data with error handling
+    output_file <- here("data", "hmda", paste0("hmda_", year, ".csv"))
     tryCatch({
         fwrite(data, output_file)
         cat("Saved processed HMDA data for", year, "to", basename(output_file), "\n")
@@ -82,29 +84,24 @@ read_hmda_old <- function(year) {
     })
 }
 
-lapply(1990:2006, read_hmda_old)
-
 # 2007-2017: CFPB format
+
+year <- 2007
+
 read_hmda <- function(year) {
     cat("Processing HMDA data for year", year, "\n")
-    
-    # Skip if already processed
-    output_file <- here("data", "hmda", paste0("hmda_", year, ".csv"))
-    if (file.exists(output_file)) {
-        cat("File already exists, skipping.\n")
-        return(NULL)
-    }
     
     # Load raw data with error handling
     input_file <- here("data", "hmda", paste0(
             "hmda_", year,
-            "_nationwide_originated-records_codes.csv"))
+            "_nationwide_originated-records_codes.zip"))
     if (!file.exists(input_file)) {
-        stop("Raw HMDA file not found: ", basename(input_file), "\nPlease run data retrieval scripts.")
+        stop("Raw HMDA file not found: ", basename(input_file),
+        "\nRefer to README.md for download instructions.")
     }
     
     tryCatch({
-        data <- fread(input_file)
+        data <- fread(cmd = sprintf("unzip -p %s", input_file))
     }, error = function(e) {
         stop("Error reading HMDA file for ", year, ": ", e$message)
     })
@@ -137,7 +134,8 @@ read_hmda <- function(year) {
 
     data <- data[, ..v_keep]
     
-    # Save processed data with error handling
+    output_file <- here("data", "hmda", paste0("hmda_", year, ".csv"))
+
     tryCatch({
         fwrite(data, output_file)
         cat("Saved processed HMDA data for", year, "to", basename(output_file), "\n")
@@ -145,8 +143,6 @@ read_hmda <- function(year) {
         stop("Error saving HMDA data for ", year, ": ", e$message)
     })
 }
-
-lapply(2007:2017, read_hmda)
 
 # Process all years in each time period
 cat("Processing historical HMDA data (1990-2006)...\n")
