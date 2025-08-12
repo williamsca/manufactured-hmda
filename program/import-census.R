@@ -84,7 +84,6 @@ v_sf3 <- c(
     "H030001", # total housing units
     "H030010", # mobile homes
     "H030002", # single family detached
-    # "H032002", # housing units (owner-occupied)
     "H032011", # mobile homes (owner-occupied)
     "H032003", # single family detached (owner-occupied)
     "H079007", # aggregate value of owner-occupied mobile homes
@@ -98,7 +97,6 @@ v_names_sf3 <- c(
     "sfd_tot",
     "oo_tot",
     "mfh_oo_tot",
-    # "sfd_oo_tot",
     "mfh_value_tot",
     "oo_value_tot",
     "inc_hh_median"
@@ -131,47 +129,50 @@ dt_states[, statefp := fifelse(
     statefp < 10, paste0("0", statefp), as.character(statefp))]
 v_states <- dt_states$statefp
 
-year_acs <- 2019
+year_acs <- c(2009, 2019)
 s_region <- "tract"
 
 # Download ACS data for each state
-cat("Downloading ACS", year_acs, "data for", length(v_states), "states...\n")
+for (year in year_acs) {
+    cat("Downloading ACS", year, "data for", length(v_states), "states...\n")
 
-for (state in v_states) {
-    output_file <- here("derived", "acs",
-        paste0("acs_", s_region, "_", year_acs, "_", state, ".csv"))
-    
-    if (file.exists(output_file)) {
-        cat("State", state, "already downloaded, skipping.\n")
-        next
+    for (state in v_states) {
+        output_file <- here("derived", "acs",
+            paste0("acs_", s_region, "_", year, "_", state, ".csv"))
+        
+        if (file.exists(output_file)) {
+            cat("State", state, "already downloaded, skipping.\n")
+            next
+        }
+
+        cat("Downloading ACS data for state:", state, "\n")
+        dt <- getACS(year, state, v_codes, region = s_region)
+
+        setnames(dt, v_codes, v_names)
+
+        # impute missing values with county medians
+        if (s_region == "tract") {
+            dt[, (v_names) := lapply(.SD, as.numeric), .SDcols = v_names]
+            dt[, (v_names) := lapply(.SD, function(x) {
+                ifelse(x < 0, NA, x)
+            }), .SDcols = v_names]
+            dt[, (v_names) := lapply(.SD, function(x) {
+                ifelse(is.na(x), median(x, na.rm = TRUE), x)
+            }), .SDcols = v_names, by = .(state, county)]
+        }
+
+        # Save data with error handling
+        tryCatch({
+            fwrite(dt, output_file)
+            cat("Saved ACS data for state", state, "to", basename(output_file), "\n")
+        }, error = function(e) {
+            stop("Error saving ACS data for state ", state, ": ", e$message)
+        })
+        
+        # Rate limit API calls
+        Sys.sleep(5)
     }
 
-    cat("Downloading ACS data for state:", state, "\n")
-    dt <- getACS(year_acs, state, v_codes, region = s_region)
-
-    setnames(dt, v_codes, v_names)
-
-    # impute missing values with county medians
-    if (s_region == "tract") {
-        dt[, (v_names) := lapply(.SD, as.numeric), .SDcols = v_names]
-        dt[, (v_names) := lapply(.SD, function(x) {
-            ifelse(x < 0, NA, x)
-        }), .SDcols = v_names]
-        dt[, (v_names) := lapply(.SD, function(x) {
-            ifelse(is.na(x), median(x, na.rm = TRUE), x)
-        }), .SDcols = v_names, by = .(state, county)]
-    }
-
-    # Save data with error handling
-    tryCatch({
-        fwrite(dt, output_file)
-        cat("Saved ACS data for state", state, "to", basename(output_file), "\n")
-    }, error = function(e) {
-        stop("Error saving ACS data for state ", state, ": ", e$message)
-    })
-    
-    # Rate limit API calls
-    Sys.sleep(5)
 }
 
 year_sf3 <- 2000

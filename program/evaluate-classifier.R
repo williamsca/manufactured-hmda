@@ -13,7 +13,7 @@ library(fixest)
 v_palette <- c("#0072B2", "#D55E00", "#009E73", "#F0E460")
 
 # import ----
-dt <- readRDS(here("derived", "hmda_1990-2003_imputed.Rds"))
+dt <- readRDS(here("derived", "hmda_1990_2017_imputed.Rds"))
 
 dt[, is_mfh_pred_bin := as.factor(fifelse(is_mfh_pred > 0.3, 1, 0))]
 

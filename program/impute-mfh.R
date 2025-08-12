@@ -9,7 +9,7 @@ library(lightgbm)
 sink("impute-mfh.log")
 
 # import ----
-v_hist <- 1990:2003
+v_hist <- 1990:2017
 v_train <- 2004:2013
 
 read_hmda <- function(year) {
@@ -80,10 +80,15 @@ categorical_indices <- match(
 # assess model performance on historical data
 dt$is_mfh_pred <- predict(lgb_model, hist_x)
 
-dt <- dt[, .(loan_amount, income, is_mfh_pred, state_code, county_code, year)]
+dt <- dt[, .(
+    sequence_number, loan_amount, income, is_mfh_pred,
+    state_code, county_code, year)]
 
 # export ----
-saveRDS(dt, here("derived", "hmda_1990-2003_imputed.Rds"))
+saveRDS(dt, here("derived", "hmda_1990_2017_imputed.Rds"))
+
+fwrite(dt[, .(sequence_number, is_mfh_pred)],
+       here("derived", "hmda_1990_2017_imputed.csv"))
 
 sink()
 

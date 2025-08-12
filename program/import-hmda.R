@@ -85,9 +85,6 @@ read_hmda_old <- function(year) {
 }
 
 # 2007-2017: CFPB format
-
-year <- 2007
-
 read_hmda <- function(year) {
     cat("Processing HMDA data for year", year, "\n")
     

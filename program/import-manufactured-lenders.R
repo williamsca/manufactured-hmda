@@ -6,10 +6,14 @@ library(here)
 library(data.table)
 library(readxl)
 
+file_link <- "https://archives.huduser.gov/portal/datasets/manu/subprime_2006_distributed.xls"
+
+if (!file.exists(here("data", "subprime_2006_distributed.xls"))) {
+    download.file(file_link, here("data", "subprime_2006_distributed.xls"), mode = "wb")
+}
+
 # import ----
 v_years <- 1993:2003
-
-year <- 1993
 
 read_year <- function(year) {
     s_year <- as.character(year)
@@ -37,11 +41,14 @@ if (uniqueN(dt[, .(respondent_id, year)]) != nrow(dt)) {
     stop("Duplicate ID/year combinations in manufactured lenders data.")
 }
 
-if (uniqueN(dt[, .(name, year)]) != nrow(dt)) {
-    warning("There are duplicate name/year combinations in manufactured lenders data.")
-}
+# NB: There are duplicate name/year combinations in manufactured lenders data.
 
 # export ----
+if (!dir.exists(here("derived"))) {
+    cat("Creating derived directory...\n")
+    dir.create(here("derived"), recursive = TRUE)
+}
+
 saveRDS(dt, here("derived", "manufactured_lenders.Rds"))
 
 

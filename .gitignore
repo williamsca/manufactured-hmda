@@ -1,7 +1,7 @@
 *.pdf
 
 data/
-crosswalk/
+derived/
 
 # History files
 .Rhistory
