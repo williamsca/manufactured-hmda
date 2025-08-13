@@ -2,7 +2,7 @@
 
 This repository contains documentation and output for a machine learning classifier that identifies mobile home loans in historical Home Mortgage Disclosure Act (HMDA) data from 1990-2003, when property type information was not collected. The data are available for public use and may be downloaded from Zenodo:
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16848727.svg)](https://doi.org/10.5281/zenodo.16848727)
 
 The imputed data highlight the massive collapse in the market for mobile home mortgages during the early 2000s. The collapse culminated in the [2002 bankruptcy of Conseco](https://www.nytimes.com/2002/12/19/business/conseco-files-for-bankruptcy-protection.html), an insurance and financial company with heavy exposure to the mobile home market. Originated loan volumes declined massively, both in levels and relative to site-built lending, and even by 2017 they remained at less than 50% of their 1998 peak.
 
@@ -33,7 +33,56 @@ The classifier uses multiple feature categories to distinguish manufactured from
 
 There are stark differences between manufactured and site-built home loans in the training data:
 
-![Summary Statistics](https://github.com/williamsca/manufactured-hmda/blob/main/results/tables/sum-stats.png?raw=true)
+</head>
+<body>
+<table style="NAborder-bottom: 0;">
+ <thead>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1"></th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">Mean (Std. Dev.)</div></th>
+</tr>
+  <tr>
+   <th style="text-align:left;"> Variable </th>
+   <th style="text-align:right;"> Site-Built </th>
+   <th style="text-align:right;"> Manufactured </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Loan Amount ($1000s) </td>
+   <td style="text-align:right;"> 208.5 (198.3) </td>
+   <td style="text-align:right;"> 75.0 (182.4) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Income ($1000s) </td>
+   <td style="text-align:right;"> 98.0 (127.5) </td>
+   <td style="text-align:right;"> 50.9 (45.7) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Urban Area (%) </td>
+   <td style="text-align:right;"> 90.6 (29.2) </td>
+   <td style="text-align:right;"> 63.3 (48.2) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Mobile Home Share of All Housing (%) </td>
+   <td style="text-align:right;"> 4.8 (8.6) </td>
+   <td style="text-align:right;"> 23.0 (15.3) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Loan-to-Income Ratio </td>
+   <td style="text-align:right;"> 2.5 (3.3) </td>
+   <td style="text-align:right;"> 1.7 (3.7) </td>
+  </tr>
+</tbody>
+<tfoot>
+<tr><td style="padding: 0; " colspan="100%"><span style="font-style: italic;">Source:</span></td></tr>
+<tr><td style="padding: 0; " colspan="100%">
+<sup></sup> HMDA data on originated loans for the purchase of owner-occupied homes from 2004 to 2013.</td></tr>
+<tr><td style="padding: 0; " colspan="100%">
+<sup></sup> Standard deviations shown in parentheses. Nominal values are adjusted to 2010 dollars.</td></tr>
+</tfoot>
+</table>
+</body>
 
 *Note: Dollar amounts in 2010 dollars*
 
