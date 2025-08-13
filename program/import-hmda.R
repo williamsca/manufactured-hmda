@@ -111,7 +111,8 @@ read_hmda <- function(year) {
         stop("Unexpected action taken code in 2007-2017 HMDA data.")
     }
 
-    if (uniqueN(data[, .(sequence_number, respondent_id, agency_code)]) != nrow(data)) {
+    # 2017 data is missing the sequence number
+    if (year < 2017 & uniqueN(data[, .(sequence_number, respondent_id, agency_code)]) != nrow(data)) {
         stop("Duplicate records found in HMDA data for year ", year)
     }    
 
