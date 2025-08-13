@@ -26,10 +26,10 @@ I employ a **Light Gradient Boosting Machine (LightGBM)** classifier to identify
 
 The classifier uses multiple feature categories to distinguish manufactured from site-built home loans:
 
-- **Loan characteristics**: Amount, loan-to-income ratio
-- **Geographic features**: Rural status, tract-level housing composition 
-- **Lender attributes**: Average loan size, lending volume, specialization
-- **Borrower demographics**: Income relative to local median
+- **Loan**: Amount, census tract
+- **Geography**: Rural status, tract-level housing prices and characteristics
+- **Lender**: Average loan size, lending volume, specialization
+- **Borrower**: Income, demographics
 
 There are stark differences between manufactured and site-built home loans in the training data:
 
@@ -88,7 +88,7 @@ There are stark differences between manufactured and site-built home loans in th
 
 ### Model Performance
 
-The LightGBM classifier demonstrates excellent performance across training, validation, and test periods:
+The LightGBM classifier demonstrates strong performance across training, validation, and test periods:
 
 </head>
 <body>
@@ -136,11 +136,7 @@ The LightGBM classifier demonstrates excellent performance across training, vali
 </table>
 </body>
 
-**Key Performance Insights:**
-
-- **Excellent Discrimination**: AUC values near 0.98 indicate the model reliably separates manufactured from site-built home loans
-- **High Sensitivity**: The model successfully identifies 92-95% of actual manufactured home loans, crucial for research applications
-- **Moderate Precision**: Reflects the challenge of the heavily imbalanced dataset where manufactured homes constitute a small fraction of total loans
+There is an important trade-off between sensitivity and precision when classes are heavily imbalanced. Identifying a larger share of actual manufactured home loans (sensitivity) inevitably yields more false positives, lowering the precision (i.e., the share of predicted mobile home loans which are actually for mobile homes). Researchers should adjust the classification threshold based on their specific needs in order to balance sensitivity and precision. A higher threshold is likely appropriate for empirical applications that seek to isolate causal effects on manufactured home lending.
 
 The modest decline from training to test periods (AUC: 0.987 → 0.978, F1: 0.413 → 0.350) suggests some temporal drift but indicates the model remains robust for historical prediction.
 
@@ -262,7 +258,7 @@ make status
 After running the complete pipeline:
 
 - **Trained classifier**: `derived/mfh-classifier.txt`
-- **Historical predictions**: `derived/hmda_1990-2003_imputed.Rds`
+- **Historical predictions**: `derived/hmda_1990-2003_imputed.Rds` and `derived/hmda_1990-2003_imputed.csv`
 - **Validation plots**: `results/plots/`
 - **Performance tables**: `results/tables/`
 
@@ -284,21 +280,6 @@ This project integrates data from multiple sources:
 - **Manufactured Home Lenders**: HUD list of specialized lenders
   - Historical lender classifications for feature engineering
 
-## Imputed Data Access
-
-**Placeholder**: Links to imputed HMDA data (1990-2003) will be provided upon publication. The dataset will include:
-- All original HMDA variables
-- Predicted manufactured home probability
-- Binary classification (threshold = 0.5)
-- Model confidence intervals
-
-## Limitations and Considerations
-
-- **Precision**: Around 25% precision means 1 in 4 predicted manufactured home loans is actually manufactured
-- **Temporal Drift**: Model performance declines slightly over time, suggesting some structural changes in lending patterns
-- **Geographic Bias**: Performance may vary in regions with substantially different lending patterns than training data
-- **Class Imbalance**: Manufactured homes represent <3% of total loans, inherently challenging for classification
-
 ## Citation
 
 If you use this classifier or the imputed data in your research, please cite:
@@ -308,7 +289,7 @@ If you use this classifier or the imputed data in your research, please cite:
   title = {Manufactured Housing Classification in Historical HMDA Data},
   author = {[Colin Williams]},
   year = {2025},
-  doi = {10.5281/zenodo.XXXXXXX},
+  doi = {10.5281/zenodo.16848727},
   url = {https://github.com/yourusername/manufactured-hmda}
 }
 ```
@@ -317,23 +298,10 @@ If you use this classifier or the imputed data in your research, please cite:
 
 This project is licensed under the [MIT License](LICENSE).
 
-## Contributing
-
-We welcome contributions to improve the classifier and extend the methodology. Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request with tests and documentation
-
 ## Support
 
-For questions about the methodology or implementation:
-- Open an [issue](https://github.com/yourusername/manufactured-hmda/issues)
-- Contact: [williams.colinandrew@gmail.com]
+For questions about the methodology or implementation, contact (williams.colinandrew@gmail.com)[williams.colinandrew@gmail.com]
 
 ## Acknowledgments
 
-- U.S. Census Bureau for demographic data access
-- Consumer Financial Protection Bureau for HMDA data
-- Department of Housing and Urban Development for manufactured home lender data
-- Forrester, Andrew. Historical Home Mortgage Disclosure Act (HMDA) Data. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2021-10-10. https://doi.org/10.3886/E151921V1
+Forrester, Andrew. Historical Home Mortgage Disclosure Act (HMDA) Data. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2021-10-10. https://doi.org/10.3886/E151921V1
