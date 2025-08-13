@@ -93,7 +93,7 @@ dt <- dt[, .(
 # export ----
 saveRDS(dt, here("derived", "hmda_1990_2017_imputed.Rds"))
 
-fwrite(dt[, .(sequence_number, year, is_mfh_pred)],
+fwrite(dt[, .(sequence_number, agency_code, respondent_id, year, is_mfh_pred)],
        here("derived", "hmda_1990_2017_imputed.csv"))
 
 sink()

@@ -84,15 +84,6 @@ The LightGBM classifier demonstrates excellent performance across training, vali
    <td style="text-align:right;"> 0.340 </td>
   </tr>
 </tbody>
-<tfoot>
-<tr><td style="padding: 0; " colspan="100%"><span style="font-style: italic;">Source:</span></td></tr>
-<tr><td style="padding: 0; " colspan="100%">
-<sup></sup> HMDA data on originated loans for the purchase of owner-occupied homes from 2004-2017.</td></tr>
-<tr><td style="padding: 0; " colspan="100%">
-<sup></sup> Metrics calculated using optimal threshold from Youden&#39;s J statistic.</td></tr>
-<tr><td style="padding: 0; " colspan="100%">
-<sup></sup> Training: 2004-2013, Validation: 2014-2015, Test: 2016-2017.</td></tr>
-</tfoot>
 </table>
 </body>
 
