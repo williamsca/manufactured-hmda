@@ -8,6 +8,7 @@
 
 data/
 derived/
+results/
 
 # History files
 .Rhistory

@@ -1,26 +1,20 @@
 # Manufactured Housing Classification in Historical HMDA Data
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+This repository contains documentation and output for a machine learning classifier that identifies mobile home loans in historical Home Mortgage Disclosure Act (HMDA) data from 1990-2003, when property type information was not collected. The data are available for public use and may be downloaded from Zenodo:
 
-This repository contains documentation and output for a machine learning classifier that identifies manufactured home loans in historical Home Mortgage Disclosure Act (HMDA) data from 1990-2003, when property type information was not collected.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 
 ## Overview
 
 ### The Missing Data Problem
 
-Prior to 2004, the Home Mortgage Disclosure Act (HMDA) did not require lenders to report property type information, creating a substantial gap in our understanding of manufactured home lending patterns during the 1990s and early 2000s. This period coincides with significant expansion in subprime lending and represents a crucial era for understanding housing finance disparities.
+Prior to 2004, the Home Mortgage Disclosure Act (HMDA) did not require lenders to report property type information, creating a substantial gap in our understanding of manufactured home lending patterns during the 1990s and early 2000s. This period coincides with significant expansion in subprime lending and represents a crucial era for understanding housing finance in the sector.
 
-The lack of property type data prevents researchers from analyzing manufactured home lending patterns, geographic concentration, and borrower characteristics during this formative period in housing finance.
+The lack of property type data prevents researchers from analyzing manufactured home lending patterns, geographic concentration, and borrower characteristics during this formative period in manufactured housing finance.
 
 ### Solution: Machine Learning Classification
 
-I employ a **Light Gradient Boosting Machine (LightGBM)** classifier to identify manufactured home loans in historical HMDA data. The model is trained on HMDA data from 2004-2013 (when property type was reported) and validated on 2014-2017 data.
-
-**Key advantages of our approach:**
-- Efficient handling of categorical variables without extensive preprocessing
-- Robust performance with missing values and class imbalance  
-- Ability to capture complex interactions between loan, geographic, and lender features
-- High sensitivity (>92%) for identifying manufactured home loans
+I employ a **Light Gradient Boosting Machine (LightGBM)** classifier to identify manufactured home loans in historical HMDA data. The model is trained on HMDA data from 2004-2013 (when property type was reported) and validated on 2014-2017 data. The LightGBM classifier helps to capture interactions between loan, lender, and geographic features and is especially effective for settings with high-dimensional categorical data.
 
 ## Data and Methodology
 
@@ -63,11 +57,9 @@ The classifier does not rely solely on loan amounts to distinguish property type
 
 #### External Validation Against Census Data
 
-I validate the model's historical predictions against independent Census data on manufactured home placements. The model successfully captures the decline in manufactured housing that began in 1999, though origination patterns lag placement data as expected.
+I validate the model's historical predictions against independent Census data on manufactured home placements. The model successfully captures the decline in manufactured housing that began in 1999, though origination patterns lag placement data. This lag is reasonable given the inherent difference between loan origination and actual home placement.
 
 ![Originations vs Placements](results/plots/orig_tot-place_tot.png)
-
-**Quantitative Validation**: State-level regression analysis shows imputed originations are highly correlated with Census placements (R² = 0.72, elasticity ≈ 0.89).
 
 ## Repository Structure
 

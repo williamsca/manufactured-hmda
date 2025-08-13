@@ -33,22 +33,13 @@ help: ## Display this help message
 	@echo "  1. Set CENSUS_KEY environment variable"
 	@echo "  2. Run 'make all' to build complete pipeline"
 
-# Data retrieval (placeholder - user will implement)
-.PHONY: data-retrieve
-data-retrieve: ## Retrieve raw data (HMDA, CPI, lender data)
-	@echo "Running automated data retrieval scripts..."
-	@echo "Note: This target assumes data retrieval scripts are implemented"
-	@echo "Expected downloads:"
-	@echo "  - HMDA data (1990-2023) → $(DATA_DIR)/hmda/"
-	@echo "  - CPI data → $(DATA_DIR)/cpi/"
-	@echo "  - Manufactured lender data → $(DATA_DIR)/"
-	@if [ ! -d "$(DATA_DIR)/hmda" ]; then echo "Warning: HMDA data directory not found"; fi
-
 # Data processing pipeline
 .PHONY: data-process
 data-process: $(DERIVED_DIR) data-retrieve ## Process raw data into analysis-ready format
-	@echo "Processing manufactured home lender data..."
+	@echo "Downloading manufactured home lender data..."
 	Rscript $(PROGRAM_DIR)/import-manufactured-lenders.R
+	@echo "Downloading Census Mobile Home Survey data..."
+	Rscript $(PROGRAM_DIR)/import-mhs.R
 	@echo "Downloading Census demographic data..."
 	Rscript $(PROGRAM_DIR)/import-census.R
 	@echo "Processing HMDA mortgage data..."
@@ -137,16 +128,6 @@ install-deps: ## Install required R packages
 	@echo "Installing R package dependencies..."
 	Rscript -e "packages <- c('here', 'data.table', 'readxl', 'bit64', 'censusapi', 'lightgbm', 'pROC', 'caret', 'fixest', 'ggplot2', 'kableExtra'); install.packages(packages[!packages %in% installed.packages()[,'Package']], dependencies=TRUE)"
 	@echo "Package installation complete."
-
-# Testing
-.PHONY: test
-test: check-env check-data ## Run basic pipeline tests
-	@echo "Running pipeline tests..."
-	@echo "This is a placeholder for test implementation"
-	@echo "Consider adding:"
-	@echo "  - Data format validation"
-	@echo "  - Model performance benchmarks"
-	@echo "  - Output file integrity checks"
 
 # Cleanup
 .PHONY: clean

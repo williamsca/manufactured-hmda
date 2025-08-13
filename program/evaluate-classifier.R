@@ -12,6 +12,10 @@ library(fixest)
 
 v_palette <- c("#0072B2", "#D55E00", "#009E73", "#F0E460")
 
+if (!dir.exists(here("results", "plots"))) {
+    dir.create(here("results", "plots"), recursive = TRUE)
+}
+
 # import ----
 dt <- readRDS(here("derived", "hmda_1990_2017_imputed.Rds"))
 
@@ -25,7 +29,6 @@ dt_state <- dt[, .(
 by = .(is_mfh = is_mfh_pred_bin, state_code, year)
 ]
 
-# See 'enabling-acts/' for import script
 dt_mhs <- readRDS(here("derived", "mhs.Rds"))
 dt_mhs_yr <- dt_mhs[, .(count = sum(place_tot, na.rm = TRUE)), by = year]
 
@@ -55,7 +58,7 @@ dt_yr <- dt_state[,
 dt_yr[, n_orig_index := 100 * n_originations / n_originations[year == 1998], by = .(is_mfh)]
 
 # densities of loan amounts by imputed property type
-dt[, is_mfh := fifelse(is_mfh_pred > 0.5, "Manufactured", "Site-Built")]
+dt[, is_mfh := fifelse(is_mfh_pred > 0.3, "Manufactured", "Site-Built")]
 
 ggplot(dt,
     aes(x = loan_amount, color = is_mfh, group = is_mfh, after_stat(density))) +
@@ -159,30 +162,3 @@ ggsave(here("results", "plots", "orig_tot-place_tot.pdf"),
     width = 8, height = 5, device = "pdf")
 ggsave(here("results", "plots", "orig_tot-place_tot.png"),
     width = 8, height = 5, device = "png", dpi = 300)
-
-# run regression: log(originations) on log(placements)
-dt_state[, `:=`(
-    log_originations = log(n_originations),
-    log_place_tot = log(place_tot)
-)]
-
-feols_orig <- feols(
-    log_originations ~ -1 + log_place_tot | csw0(state_code, year),
-    data = dt_state[is_mfh == 1],
-    weights = ~place_tot)
-etable(feols_orig)
-
-setFixest_dict(c(
-    log_originations = "log(mortgage originations)",
-    log_place_tot = "log(placements)"),
-    reset = TRUE)
-
-etable(
-    feols_orig,
-    title = "Imputed Originations and Placements Are Highly Correlated",
-    label = "orig-place-reg",
-    notes = "\\vspace{1em}\\emph{Source:  } HMDA and Census data (1990-2003). Imputed originations are aggregated by state and year.",
-    file = here("results", "tables", "orig_tot-place_tot.tex"),
-    replace = TRUE, digits = 2, drop = "Constant",
-    fitstat = c("n", "r2", "wr2")
-)
