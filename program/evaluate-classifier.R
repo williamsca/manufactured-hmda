@@ -71,8 +71,6 @@ ggplot(dt,
     theme_classic(base_size = 14) +
     theme(legend.position = "bottom")
 
-ggsave(here("results", "plots", "loan_amounts_by_imputed_type.pdf"),
-    width = 8, height = 5, device = "pdf")
 ggsave(here("results", "plots", "loan_amounts_by_imputed_type.png"),
     width = 8, height = 5, device = "png", dpi = 300)
 
@@ -93,8 +91,7 @@ ggplot(dt_yr,
     ) +
     theme_classic(base_size = 14) +
     theme(legend.position = "bottom")
-ggsave(here("results", "plots", "originations_by_year.pdf"),
-    width = 8, height = 5, device = "pdf")
+
 ggsave(here("results", "plots", "originations_by_year.png"),
     width = 8, height = 5, device = "png", dpi = 300)
 
@@ -137,7 +134,6 @@ ggplot(dt_yr,
     ) +
     theme_classic(base_size = 14) +
     theme(legend.position = "bottom")
-ggsave(here("results", "plots", "orig_tot-place_tot.pdf"),
-    width = 8, height = 5, device = "pdf")
+
 ggsave(here("results", "plots", "orig_tot-place_tot.png"),
     width = 8, height = 5, device = "png", dpi = 300)

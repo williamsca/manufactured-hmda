@@ -33,7 +33,7 @@ The classifier uses multiple feature categories to distinguish manufactured from
 
 There are stark differences between manufactured and site-built home loans in the training data:
 
-![Summary Statistics](https://github.com/williamsca/manufactured-hmda/blob/main/results/tables/sum-stats.pdf?raw=true)
+![Summary Statistics](https://github.com/williamsca/manufactured-hmda/blob/main/results/tables/sum-stats.png?raw=true)
 
 *Note: Dollar amounts in 2010 dollars*
 
@@ -41,7 +41,60 @@ There are stark differences between manufactured and site-built home loans in th
 
 The LightGBM classifier demonstrates excellent performance across training, validation, and test periods:
 
-![Model Metrics](https://github.com/williamsca/manufactured-hmda/blob/main/results/tables/model_metrics.pdf?raw=true)
+</head>
+<body>
+<table style="NAborder-bottom: 0;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Dataset </th>
+   <th style="text-align:right;"> AUC </th>
+   <th style="text-align:right;"> Accuracy </th>
+   <th style="text-align:right;"> Sensitivity </th>
+   <th style="text-align:right;"> Specificity </th>
+   <th style="text-align:right;"> Precision </th>
+   <th style="text-align:right;"> F1 </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Train (2004-2013) </td>
+   <td style="text-align:right;"> 0.987 </td>
+   <td style="text-align:right;"> 0.934 </td>
+   <td style="text-align:right;"> 0.954 </td>
+   <td style="text-align:right;"> 0.933 </td>
+   <td style="text-align:right;"> 0.262 </td>
+   <td style="text-align:right;"> 0.411 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Validation (2014-2015) </td>
+   <td style="text-align:right;"> 0.985 </td>
+   <td style="text-align:right;"> 0.932 </td>
+   <td style="text-align:right;"> 0.944 </td>
+   <td style="text-align:right;"> 0.932 </td>
+   <td style="text-align:right;"> 0.248 </td>
+   <td style="text-align:right;"> 0.393 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Test (2016-2017) </td>
+   <td style="text-align:right;"> 0.979 </td>
+   <td style="text-align:right;"> 0.915 </td>
+   <td style="text-align:right;"> 0.931 </td>
+   <td style="text-align:right;"> 0.914 </td>
+   <td style="text-align:right;"> 0.208 </td>
+   <td style="text-align:right;"> 0.340 </td>
+  </tr>
+</tbody>
+<tfoot>
+<tr><td style="padding: 0; " colspan="100%"><span style="font-style: italic;">Source:</span></td></tr>
+<tr><td style="padding: 0; " colspan="100%">
+<sup></sup> HMDA data on originated loans for the purchase of owner-occupied homes from 2004-2017.</td></tr>
+<tr><td style="padding: 0; " colspan="100%">
+<sup></sup> Metrics calculated using optimal threshold from Youden&#39;s J statistic.</td></tr>
+<tr><td style="padding: 0; " colspan="100%">
+<sup></sup> Training: 2004-2013, Validation: 2014-2015, Test: 2016-2017.</td></tr>
+</tfoot>
+</table>
+</body>
 
 **Key Performance Insights:**
 
@@ -57,13 +110,13 @@ The modest decline from training to test periods (AUC: 0.987 → 0.978, F1: 0.41
 
 The classifier does not rely solely on loan amounts to distinguish property types. Analysis of predicted loan amounts shows significant overlap between manufactured and site-built homes, especially in the $60,000-$100,000 range.
 
-![Loan Amounts by Property Type](https://github.com/williamsca/manufactured-hmda/blob/main/results/plots/loan_amounts_by_imputed_type.pdf?raw=true)
+![Loan Amounts by Property Type](https://github.com/williamsca/manufactured-hmda/blob/main/results/plots/loan_amounts_by_imputed_type.png?raw=true)
 
 #### External Validation Against Census Data
 
 I validate the model's historical predictions against independent Census data on manufactured home placements. The model successfully captures the decline in manufactured housing that began in 1999, though origination patterns lag placement data. This lag is reasonable given the inherent difference between loan origination and actual home placement.
 
-![Originations vs Placements](https://github.com/williamsca/manufactured-hmda/blob/main/results/plots/orig_tot-place_tot.pdf?raw=true)
+![Originations vs Placements](https://github.com/williamsca/manufactured-hmda/blob/main/results/plots/orig_tot-place_tot.png?raw=true)
 
 ## Repository Structure
 

@@ -6,9 +6,7 @@
 
 data/
 derived/
-results/tables/*.csv
-results/tables/*.tex
-results/plots/*.png
+results/tables
 
 # History files
 .Rhistory

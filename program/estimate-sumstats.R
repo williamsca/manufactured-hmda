@@ -72,6 +72,24 @@ kbl_sum_stats <- kbl(
     )
 save_kable(kbl_sum_stats, here("results", "tables", "sum-stats.pdf"))
 
+kbl_sum_stats <- kbl(
+    dt_sum[, .(variable, site_built, manufactured)],
+    col.names = c("Variable", "Site-Built", "Manufactured"),
+    format = "html",
+    booktabs = TRUE,
+    linesep = "",
+    align = c("l", "r", "r")
+) %>%
+    add_header_above(c(" " = 1, "Mean (Std. Dev.)" = 2)) %>%
+    footnote(
+        general = c(
+            "HMDA data on originated loans for the purchase of owner-occupied homes from 2004 to 2013.",
+            "Standard deviations shown in parentheses. Nominal values are adjusted to 2010 dollars."
+        ),
+        general_title = "Source:"
+    )
+save_kable(kbl_sum_stats, here("results", "tables", "sum-stats.html"))
+
 
 # model metrics ----
 metrics_table <- fread(here("results", "tables", "model_metrics.csv"))
@@ -89,4 +107,18 @@ kbl_metrics <- kable(metrics_table,
     )
 
 save_kable(kbl_metrics, here("results", "tables", "model_metrics.pdf"))
+
+kbl_metrics <- kable(metrics_table,
+    format = "html",
+    booktabs = TRUE
+) %>%
+    footnote(
+        general = c(
+            "HMDA data on originated loans for the purchase of owner-occupied homes from 2004-2017.",
+            "Metrics calculated using optimal threshold from Youden's J statistic.",
+            "Training: 2004-2013, Validation: 2014-2015, Test: 2016-2017."
+        ),
+        general_title = "Source:"
+    )
+save_kable(kbl_metrics, here("results", "tables", "model_metrics.html"))
 
