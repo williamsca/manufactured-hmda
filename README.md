@@ -6,7 +6,7 @@ This repository contains documentation and output for a machine learning classif
 
 The imputed data indicate a massive collapse in the market for mobile home mortgages during the late 1990s. The collapse culminated in the [2002 bankruptcy of Conseco](https://www.nytimes.com/2002/12/19/business/conseco-files-for-bankruptcy-protection.html), an insurance and financial company with heavy exposure to the mobile home market. Originated loan volumes declined massively, both in levels and relative to site-built lending, and even by 2017 they remained at less than 50% of their 1998 peak.
 
-![Mortgage Trends by House Type](results/figures/originations_by_year.pdf)
+![Mortgage Trends by House Type](https://github.com/williamsca/manufactured-hmda/blob/main/results/plots/originations_by_year.pdf?raw=true)
 
 ## Overview
 
@@ -33,7 +33,7 @@ The classifier uses multiple feature categories to distinguish manufactured from
 
 There are stark differences between manufactured and site-built home loans in the training data:
 
-![Summary Statistics](results/tables/sum-stats.pdf)
+![Summary Statistics](https://github.com/williamsca/manufactured-hmda/blob/main/results/tables/sum-stats.pdf?raw=true)
 
 *Note: Dollar amounts in 2010 dollars*
 
@@ -41,7 +41,7 @@ There are stark differences between manufactured and site-built home loans in th
 
 The LightGBM classifier demonstrates excellent performance across training, validation, and test periods:
 
-![Model Metrics](results/tables/model_metrics.pdf)
+![Model Metrics](https://github.com/williamsca/manufactured-hmda/blob/main/results/tables/model_metrics.pdf?raw=true)
 
 **Key Performance Insights:**
 
@@ -57,13 +57,13 @@ The modest decline from training to test periods (AUC: 0.987 → 0.978, F1: 0.41
 
 The classifier does not rely solely on loan amounts to distinguish property types. Analysis of predicted loan amounts shows significant overlap between manufactured and site-built homes, especially in the $60,000-$100,000 range.
 
-![Loan Amounts by Property Type](results/plots/loan_amounts_by_imputed_type.pdf)
+![Loan Amounts by Property Type](https://github.com/williamsca/manufactured-hmda/blob/main/results/plots/loan_amounts_by_imputed_type.pdf?raw=true)
 
 #### External Validation Against Census Data
 
 I validate the model's historical predictions against independent Census data on manufactured home placements. The model successfully captures the decline in manufactured housing that began in 1999, though origination patterns lag placement data. This lag is reasonable given the inherent difference between loan origination and actual home placement.
 
-![Originations vs Placements](results/plots/orig_tot-place_tot.pdf)
+![Originations vs Placements](https://github.com/williamsca/manufactured-hmda/blob/main/results/plots/orig_tot-place_tot.pdf?raw=true)
 
 ## Repository Structure
 
