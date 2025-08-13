@@ -1,9 +1,6 @@
 # This script evaluates the performance of the light gbm model
 # by comparing its historical predictions to Census data.
 
-# NB: 'countyfp' is converted to a factor in the imputation script,
-# so it does not correspond to an actual county FIPS code.
-
 rm(list = ls())
 library(here)
 library(data.table)
@@ -73,7 +70,7 @@ ggplot(dt,
     scale_y_continuous(labels = scales::comma) +
     theme_classic(base_size = 14) +
     theme(legend.position = "bottom")
-# Save both PDF and PNG versions for different uses
+
 ggsave(here("results", "plots", "loan_amounts_by_imputed_type.pdf"),
     width = 8, height = 5, device = "pdf")
 ggsave(here("results", "plots", "loan_amounts_by_imputed_type.png"),
@@ -84,7 +81,7 @@ ggsave(here("results", "plots", "loan_amounts_by_imputed_type.png"),
 ggplot(dt_yr,
     aes(x = year, y = n_orig_index, color = is_mfh, group = is_mfh)) +
     geom_line(linetype = "dashed") +
-    scale_x_continuous(breaks = seq(1990, 2017, 2)) +
+    scale_x_continuous(breaks = seq(1990, 2017, 5)) +
     geom_point() +
     scale_color_manual(
         values = v_palette,
