@@ -15,6 +15,8 @@ v_train <- 2004:2013
 v_valid <- 2014:2015
 v_test <- 2016:2017
 
+sink("log.txt")
+
 read_hmda <- function(year) {
     fread(
         here("derived", paste0("hmda_", year, ".csv")), keepLeadingZeros = TRUE,
@@ -204,66 +206,6 @@ all_metrics <- rbindlist(list(
 # inspect results ----
 print(all_metrics)
 
-# generate summary statistics table ----
-summary_vars <- c("loan_amount", "income", "loan_to_income", "mfh_pct", "is_urban")
-
-# Calculate summary statistics for manufactured vs site-built homes
-sum_stats_mfh <- dt_train[is_manufactured == 1, 
-    lapply(.SD, function(x) {
-        list(mean = round(mean(x, na.rm = TRUE), 0),
-             sd = round(sd(x, na.rm = TRUE), 0),
-             n = sum(!is.na(x)))
-    }), .SDcols = summary_vars]
-
-sum_stats_site <- dt_train[is_manufactured == 0,
-    lapply(.SD, function(x) {
-        list(mean = round(mean(x, na.rm = TRUE), 0), 
-             sd = round(sd(x, na.rm = TRUE), 0),
-             n = sum(!is.na(x)))
-    }), .SDcols = summary_vars]
-
-# Create formatted summary table
-summary_table <- data.table(
-    Variable = c("Loan Amount ($000s)", "Income ($000s)", "Loan-to-Income Ratio", 
-                "Tract MFH Share (%)", "Urban Area (%)")
-)
-
-# Add manufactured home statistics
-summary_table[, `Manufactured Homes` := c(
-    paste0(sum_stats_mfh$loan_amount$mean, " (", sum_stats_mfh$loan_amount$sd, ")"),
-    paste0(sum_stats_mfh$income$mean, " (", sum_stats_mfh$income$sd, ")"),
-    paste0(round(sum_stats_mfh$loan_to_income$mean, 1), " (", 
-           round(sum_stats_mfh$loan_to_income$sd, 1), ")"),
-    paste0(round(sum_stats_mfh$mfh_pct$mean * 100, 1), " (", 
-           round(sum_stats_mfh$mfh_pct$sd * 100, 1), ")"),
-    paste0(round(sum_stats_mfh$is_urban$mean * 100, 0), " (", 
-           round(sum_stats_mfh$is_urban$sd * 100, 0), ")")
-)]
-
-# Add site-built home statistics  
-summary_table[, `Site-Built Homes` := c(
-    paste0(sum_stats_site$loan_amount$mean, " (", sum_stats_site$loan_amount$sd, ")"),
-    paste0(sum_stats_site$income$mean, " (", sum_stats_site$income$sd, ")"),
-    paste0(round(sum_stats_site$loan_to_income$mean, 1), " (", 
-           round(sum_stats_site$loan_to_income$sd, 1), ")"),
-    paste0(round(sum_stats_site$mfh_pct$mean * 100, 1), " (", 
-           round(sum_stats_site$mfh_pct$sd * 100, 1), ")"),
-    paste0(round(sum_stats_site$is_urban$mean * 100, 0), " (", 
-           round(sum_stats_site$is_urban$sd * 100, 0), ")")
-)]
-
-# Export summary statistics table
-kable(summary_table,
-      format = "latex",
-      booktabs = TRUE,
-      caption = "Summary Statistics by Property Type (Training Data 2004-2013)",
-      label = "sum-stats") %>%
-  kable_styling(latex_options = c("hold_position")) %>%
-  footnote(general = "Standard deviations in parentheses. Dollar amounts in thousands of 2010 dollars. Source: HMDA data.",
-           threeparttable = TRUE) %>%
-  writeLines(here("results", "tables", "sum-stats.tex")) %>%
-  save_kable(here("results", "tables", "sum-stats.pdf"))
-
 # export model metrics table ----
 metrics_table <- all_metrics[, .(
     Dataset = dataset,
@@ -292,3 +234,5 @@ print(importance)
 
 # top 15 features
 lgb.plot.importance(importance, top_n = 15)
+
+sink()
