@@ -217,6 +217,8 @@ metrics_table <- all_metrics[, .(
     F1 = round(f1, 3)
 )]
 
+fwrite(metrics_table, here("results", "tables", "model_metrics.csv"))
+
 kable(metrics_table,
       format = "latex",
       booktabs = TRUE,
