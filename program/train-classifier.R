@@ -219,17 +219,6 @@ metrics_table <- all_metrics[, .(
 
 fwrite(metrics_table, here("results", "tables", "model_metrics.csv"))
 
-kable(metrics_table,
-      format = "latex",
-      booktabs = TRUE,
-      caption = "Light GBM Model Performance Metrics",
-      label = "model_metrics") %>%
-  kable_styling(latex_options = c("hold_position")) %>%
-  footnote(general = "Metrics calculated using optimal threshold from Youden's J statistic. Training: 2004-2013, Validation: 2014-2015, Test: 2016-2017. Source: HMDA data.",
-           threeparttable = TRUE) %>%
-  writeLines(here("results", "tables", "model_metrics.tex")) %>%
-  save_kable(here("results", "tables", "model_metrics.pdf"))
-
 # feature importance analysis
 importance <- lgb.importance(lgb_model)
 print(importance)

@@ -84,7 +84,7 @@ ggsave(here("results", "plots", "loan_amounts_by_imputed_type.png"),
 ggplot(dt_yr,
     aes(x = year, y = n_orig_index, color = is_mfh, group = is_mfh)) +
     geom_line(linetype = "dashed") +
-    scale_x_continuous(breaks = seq(1990, 2003, 2)) +
+    scale_x_continuous(breaks = seq(1990, 2017, 2)) +
     geom_point() +
     scale_color_manual(
         values = v_palette,
@@ -100,24 +100,6 @@ ggsave(here("results", "plots", "originations_by_year.pdf"),
     width = 8, height = 5, device = "pdf")
 ggsave(here("results", "plots", "originations_by_year.png"),
     width = 8, height = 5, device = "png", dpi = 300)
-
-# loam amounts
-ggplot(dt_yr,
-    aes(x = year, y = loan_amount, color = is_mfh, group = is_mfh)) +
-    geom_line(linetype = "dashed") +
-    geom_point() +
-        scale_x_continuous(breaks = seq(1990, 2003, 2)) +
-    geom_point() +
-    scale_color_manual(
-        values = v_palette,
-        labels = c("Site-Built", "Manufactured")) +
-    labs(
-        x = "",
-        y = "Loan amount\n($1000s)",
-        color = ""
-    ) +
-    theme_classic(base_size = 14) +
-    theme(legend.position = "bottom")
 
 # compare mfh originations to placement data
 dt_yr[, n_originations := as.numeric(n_originations)]
