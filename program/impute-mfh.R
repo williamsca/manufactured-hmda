@@ -54,6 +54,9 @@ numeric_features <- c(
 
 categorical_features <- setdiff(selected_features, numeric_features)
 
+dt[, respondent_id_tmp := respondent_id]
+dt[, agency_code_tmp := agency_code]
+
 for (col in categorical_features) {
     if (!is.factor(dt_train[[col]])) {
         dt_train[[col]] <- as.factor(dt_train[[col]])
@@ -80,8 +83,11 @@ categorical_indices <- match(
 # assess model performance on historical data
 dt$is_mfh_pred <- predict(lgb_model, hist_x)
 
+dt[, c("respondent_id", "agency_code") := NULL]
+
 dt <- dt[, .(
-    sequence_number, loan_amount, income, is_mfh_pred,
+    sequence_number, respondent_id = respondent_id_tmp,
+    agency_code = agency_code_tmp, loan_amount, income, is_mfh_pred,
     state_code, county_code, year)]
 
 # export ----

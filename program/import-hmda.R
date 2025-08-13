@@ -48,6 +48,10 @@ read_hmda_old <- function(year) {
 
     data <- fread(cmd = sprintf("unzip -p %s", input_file))
 
+    if (uniqueN(data[, .(sequence_number, respondent_id, agency_code)]) != nrow(data)) {
+        stop("Duplicate records found in HMDA data for year ", year)
+    }
+
     setnames(data,
         c("occupancy_type", "activity_year"),
         c("owner_occupancy", "as_of_year"),
@@ -106,6 +110,10 @@ read_hmda <- function(year) {
     if (any(data$action_taken != 1)) {
         stop("Unexpected action taken code in 2007-2017 HMDA data.")
     }
+
+    if (uniqueN(data[, .(sequence_number, respondent_id, agency_code)]) != nrow(data)) {
+        stop("Duplicate records found in HMDA data for year ", year)
+    }    
 
     # home purchases
     data <- data[

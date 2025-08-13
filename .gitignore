@@ -1,5 +1,3 @@
-*.pdf
-
 # hpc job files
 *.slurm
 *.err
@@ -8,7 +6,9 @@
 
 data/
 derived/
-results/
+results/tables/*.csv
+results/tables/*.tex
+results/plots/*.png
 
 # History files
 .Rhistory
