@@ -4,6 +4,10 @@ This repository contains documentation and output for a machine learning classif
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 
+The imputed data indicate a massive collapse in the market for mobile home mortgages during the late 1990s. The collapse culminating in the [2002 bankruptcy of Conseco](https://www.nytimes.com/2002/12/19/business/conseco-files-for-bankruptcy-protection.html), an insurance and financial company with heavy exposure to the mobile home market. Originated loan volumes declined massively, both in levels and relative to site-built lending, and they had not recovered by 2017. 
+
+![Mortgage Trends by House Type](results/figures/originations_by_year.pdf)
+
 ## Overview
 
 ### The Missing Data Problem
