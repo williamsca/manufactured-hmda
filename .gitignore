@@ -8,6 +8,8 @@ data/
 derived/
 results/tables
 
+run_remote.sh
+
 # History files
 .Rhistory
 .Rapp.history
