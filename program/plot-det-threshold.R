@@ -92,10 +92,6 @@ dt_errors <- rbindlist(lapply(thresholds, function(t) {
     )
 }))
 
-# Youden's J optimal threshold
-dt_errors[, j := (1 - fpr) + (1 - fnr) - 1]
-optimal_t <- dt_errors[which.max(j)]
-
 # plot ----
 dt_plot <- melt(dt_errors,
     id.vars = "threshold",
@@ -110,18 +106,18 @@ dt_plot[, error_type := factor(error_type,
 
 ggplot(dt_plot, aes(x = threshold, y = rate,
         color = error_type, linetype = error_type)) +
+    geom_hline(yintercept = seq(0.05, 0.95, by = 0.10),
+        color = "gray85", linewidth = 0.3) +
+    geom_hline(yintercept = seq(0.10, 0.90, by = 0.10),
+        color = "gray70", linewidth = 0.5) +
     geom_line(linewidth = 1) +
-    geom_vline(xintercept = optimal_t$threshold,
-        linetype = "dotted", color = "black") +
-    annotate("text",
-        x = optimal_t$threshold + 0.02, y = 0.85,
-        label = paste0("Optimal threshold\n(t = ",
-            round(optimal_t$threshold, 2), ")"),
-        hjust = 0, size = 3.5, color = "gray40", family = "serif") +
     scale_color_manual(values = v_palette) +
     scale_linetype_manual(values = v_lines) +
     scale_x_continuous(breaks = seq(0, 1, 0.1)) +
-    scale_y_continuous(labels = scales::percent_format()) +
+    scale_y_continuous(
+        breaks = seq(0, 1, by = 0.10),
+        labels = scales::percent_format()
+    ) +
     labs(
         x = "Classification threshold",
         y = "Error rate",
@@ -131,8 +127,8 @@ ggplot(dt_plot, aes(x = threshold, y = rate,
     theme_classic(base_size = 14) +
     theme(
         text = element_text(family = "serif"),
-        legend.position = "right"
+        legend.position = "bottom"
     )
 
-ggsave(here("results", "plots", "det_threshold.pdf"),
-    width = 9, height = 5)
+ggsave(here("results", "plots", "det_threshold.png"),
+    width = 8, height = 5)
